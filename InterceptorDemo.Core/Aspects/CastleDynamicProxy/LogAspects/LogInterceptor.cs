@@ -1,4 +1,5 @@
-﻿using Castle.Core.Logging;
+﻿using Castle.Core.Internal;
+using Castle.Core.Logging;
 using Castle.DynamicProxy;
 using InterceptorDemo.Core.CrossCuttingConcerns.Logging;
 using System;
@@ -17,6 +18,8 @@ namespace InterceptorDemo.Core.Aspects.CastleDynamicProxy.LogAspects
 
 		public void Intercept(IInvocation invocation)
 		{
+			var logAttribute = invocation.MethodInvocationTarget.GetAttribute<LogAttribute>();
+
 			if (!invocation.MethodInvocationTarget.IsDefined(typeof(LogAttribute), false))
 			{
 				invocation.Proceed();
