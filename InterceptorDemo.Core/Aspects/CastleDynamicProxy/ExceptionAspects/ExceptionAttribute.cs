@@ -1,15 +1,7 @@
-﻿using System;
-
-namespace InterceptorDemo.Core.Aspects.CastleDynamicProxy.ExceptionAspects
+﻿namespace InterceptorDemo.Core.Aspects.CastleDynamicProxy.ExceptionAspects
 {
-	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
-	public class ExceptionAttribute : Attribute
+	public class ExceptionAttribute : BaseAttribute
 	{
-		public bool IsActive { get; private set; }
-
-		public ExceptionAttribute(bool isActive = true)
-		{
-			IsActive = isActive;
-		}
+		public ExceptionAttribute(bool isActive = true) : base(isActive) { }
 	}
 }
