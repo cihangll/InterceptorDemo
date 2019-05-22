@@ -29,5 +29,24 @@ namespace InterceptorDemo.WebUI.Controllers
 			return Json(await _productService.GetProductsAsync());
 		}
 
+		[HttpGet("test3")]
+		public IActionResult Test3()
+		{
+			_productService.ThrowError();
+			return Json("");
+		}
+
+		[HttpGet("test4")]
+		public async Task<IActionResult> Test4()
+		{
+			await _productService.ThrowErrorAsync();
+			return Json("");
+		}
+
+		[HttpGet("test5")]
+		public async Task<IActionResult> Test5()
+		{
+			return Json(await _productService.ThrowErrorAsyncWithReturnType());
+		}
 	}
 }

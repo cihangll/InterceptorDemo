@@ -8,5 +8,9 @@ namespace InterceptorDemo.Application.Abstract
 	{
 		List<Product> GetProducts();
 		Task<List<Product>> GetProductsAsync();
+
+		void ThrowError();
+		Task ThrowErrorAsync();
+		Task<string> ThrowErrorAsyncWithReturnType();
 	}
 }

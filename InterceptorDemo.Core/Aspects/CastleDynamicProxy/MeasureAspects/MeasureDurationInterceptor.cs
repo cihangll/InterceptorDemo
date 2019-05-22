@@ -11,8 +11,8 @@ namespace InterceptorDemo.Core.Aspects.CastleDynamicProxy.MeasureAspects
 	public class MeasureDurationInterceptor : IInterceptor
 	{
 		private static readonly MethodInfo handleAsyncMethodInfo = typeof(MeasureDurationInterceptor).GetMethod("InterceptAsynchronousWithResult", BindingFlags.Instance | BindingFlags.NonPublic);
-
 		private MeasureDurationAttribute attribute;
+
 		private readonly ILogger _logger;
 
 		public MeasureDurationInterceptor(ILogger logger)
