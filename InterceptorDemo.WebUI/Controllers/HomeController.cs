@@ -1,5 +1,6 @@
 ﻿using Castle.Core.Logging;
 using InterceptorDemo.Application.Abstract;
+using InterceptorDemo.Core.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -67,6 +68,19 @@ namespace InterceptorDemo.WebUI.Controllers
 		public async Task<IActionResult> Test8()
 		{
 			return Json(await _productService.NullCheck3("this will be run.", null));
+		}
+
+		[HttpGet("test9")]
+		public async Task<IActionResult> Test9()
+		{
+			return Json(await _productService.SaveProduct(new Product()
+			{
+				CategoryId = 5,
+				ProductId = 2,
+				ProductName = "test",
+				QuantityPerUnit = "4",
+				UnitPrice = 400
+			}));
 		}
 	}
 }

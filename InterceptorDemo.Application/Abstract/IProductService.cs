@@ -14,5 +14,6 @@ namespace InterceptorDemo.Application.Abstract
 		void NullCheck1(List<Product> arg1);
 		Task NullCheck2(string arg1, Product arg2);
 		Task<string> NullCheck3(string arg1, Product arg2);
+		Task<string> SaveProduct(Product product);
 	}
 }

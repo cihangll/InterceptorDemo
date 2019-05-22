@@ -22,6 +22,7 @@ namespace InterceptorDemo.Core
 			builder.RegisterType<LogInterceptor>();
 			builder.RegisterType<MeasureDurationInterceptor>();
 			builder.RegisterType<NullCheckValidationInterceptor>();
+			builder.RegisterType<FluentValidationInterceptor>();
 
 			builder.Register(x => SerilogInstance.CreateCastleCoreLogger(_config)).SingleInstance();
 		}

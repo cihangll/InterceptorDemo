@@ -1,4 +1,5 @@
 ﻿using InterceptorDemo.Application.Abstract;
+using InterceptorDemo.Application.ValidationRules.FluentValidation;
 using InterceptorDemo.Core.Aspects.CastleDynamicProxy.ExceptionAspects;
 using InterceptorDemo.Core.Aspects.CastleDynamicProxy.LogAspects;
 using InterceptorDemo.Core.Aspects.CastleDynamicProxy.MeasureAspects;
@@ -72,6 +73,13 @@ namespace InterceptorDemo.Application.Concrete
 		{
 			await Task.Delay(3000);
 			return arg1;
+		}
+
+		[FluentValidation(typeof(ProductValidator))]
+		public async Task<string> SaveProduct([NotNull]Product product)
+		{
+			await Task.Delay(6000);
+			return "Product saved.";
 		}
 	}
 }

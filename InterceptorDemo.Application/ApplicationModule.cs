@@ -36,6 +36,7 @@ namespace InterceptorDemo.Application
 		{
 			return new Type[]{
 				typeof(NullCheckValidationInterceptor),
+				typeof(FluentValidationInterceptor),
 				typeof(ExceptionHandlingInterceptor),
 				typeof(MeasureDurationInterceptor),
 				typeof(LogInterceptor)
