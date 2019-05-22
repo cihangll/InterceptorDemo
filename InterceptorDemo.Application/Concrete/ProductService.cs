@@ -1,5 +1,6 @@
 ﻿using InterceptorDemo.Application.Abstract;
 using InterceptorDemo.Core.Aspects.CastleDynamicProxy.ExceptionAspects;
+using InterceptorDemo.Core.Aspects.CastleDynamicProxy.LogAspects;
 using InterceptorDemo.Core.Aspects.CastleDynamicProxy.MeasureAspects;
 using InterceptorDemo.Core.Models;
 using System.Collections.Generic;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace InterceptorDemo.Application.Concrete
 {
+	[Log]
 	[ExceptionHandling]
 	[MeasureDuration(isActive: false)]
 	public class ProductService : IProductService
@@ -19,7 +21,6 @@ namespace InterceptorDemo.Application.Concrete
 			new Product() { CategoryId = 1, ProductId = 4,ProductName = "product 4", QuantityPerUnit = "4", UnitPrice = 500},
 			new Product() { CategoryId = 1, ProductId = 5,ProductName = "product 5", QuantityPerUnit = "5", UnitPrice = 5000}
 		};
-
 
 		public List<Product> GetProducts()
 		{
