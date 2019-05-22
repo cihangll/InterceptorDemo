@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace InterceptorDemo.Application.Concrete
 {
-	[MeasureDuration(10)]
+	[MeasureDuration(isActive: false)]
 	public class ProductService : IProductService
 	{
 		private static readonly List<Product> _products = new List<Product>()
@@ -18,13 +18,13 @@ namespace InterceptorDemo.Application.Concrete
 			new Product() { CategoryId = 1, ProductId = 5,ProductName = "product 5", QuantityPerUnit = "5", UnitPrice = 5000}
 		};
 
-		[MeasureDuration(5)]
+
 		public List<Product> GetProducts()
 		{
 			return _products;
 		}
 
-		[MeasureDuration(7)]
+		[MeasureDuration(7, true)]
 		public async Task<List<Product>> GetProductsAsync()
 		{
 			await Task.Delay(5000);
