@@ -1,9 +1,28 @@
 ﻿using Castle.DynamicProxy;
+using System.Threading.Tasks;
 
 namespace InterceptorDemo.Core.Aspects.CastleDynamicProxy
 {
+	public enum MethodType
+	{
+		Synchronous,
+		AsyncAction,
+		AsyncFunction
+	}
+
 	public static class InterceptorHelper
 	{
+		public static MethodType GetDelegateType(IInvocation invocation)
+		{
+			var returnType = invocation.Method.ReturnType;
+			if (returnType == typeof(Task))
+				return MethodType.AsyncAction;
+			if (returnType.IsGenericType && returnType.GetGenericTypeDefinition() == typeof(Task<>))
+				return MethodType.AsyncFunction;
+			return MethodType.Synchronous;
+		}
+
+
 		public static bool DecideToIntercept<T>(IInvocation invocation) where T : BaseAttribute
 		{
 			var methodAttribute = AttributeHelper.GetMethodAttribute<T>(invocation);
@@ -20,5 +39,7 @@ namespace InterceptorDemo.Core.Aspects.CastleDynamicProxy
 
 			return false;
 		}
+
+
 	}
 }

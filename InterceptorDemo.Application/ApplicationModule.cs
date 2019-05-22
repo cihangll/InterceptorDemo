@@ -4,6 +4,7 @@ using InterceptorDemo.Application.Abstract;
 using InterceptorDemo.Application.Concrete;
 using InterceptorDemo.Core.Aspects.CastleDynamicProxy.ExceptionAspects;
 using InterceptorDemo.Core.Aspects.CastleDynamicProxy.LogAspects;
+using InterceptorDemo.Core.Aspects.CastleDynamicProxy.MeasureAspects;
 using System;
 
 namespace InterceptorDemo.Application
@@ -34,6 +35,7 @@ namespace InterceptorDemo.Application
 		{
 			return new Type[]{
 				typeof(ExceptionHandlingInterceptor),
+				typeof(MeasureDurationInterceptor),
 				typeof(LogInterceptor)
 			};
 		}

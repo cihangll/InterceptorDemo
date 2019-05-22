@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using InterceptorDemo.Core.Aspects.CastleDynamicProxy.ExceptionAspects;
 using InterceptorDemo.Core.Aspects.CastleDynamicProxy.LogAspects;
+using InterceptorDemo.Core.Aspects.CastleDynamicProxy.MeasureAspects;
 
 namespace InterceptorDemo.Core
 {
@@ -10,6 +11,7 @@ namespace InterceptorDemo.Core
 		{
 			builder.RegisterType<ExceptionHandlingInterceptor>();
 			builder.RegisterType<LogInterceptor>();
+			builder.RegisterType<MeasureDurationInterceptor>();
 		}
 	}
 }

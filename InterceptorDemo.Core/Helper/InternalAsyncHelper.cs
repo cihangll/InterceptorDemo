@@ -18,6 +18,8 @@ namespace InterceptorDemo.Core.Helper
 				);
 		}
 
+
+
 		public static async Task AwaitTaskWithFinally(Task actualReturnValue, Action<Exception> finalAction)
 		{
 			Exception exception = null;

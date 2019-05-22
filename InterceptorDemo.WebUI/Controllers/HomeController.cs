@@ -1,6 +1,7 @@
 ﻿using Castle.Core.Logging;
 using InterceptorDemo.Application.Abstract;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace InterceptorDemo.WebUI.Controllers
 {
@@ -17,9 +18,16 @@ namespace InterceptorDemo.WebUI.Controllers
 		}
 
 		[HttpGet("test1")]
-		public IActionResult Index()
+		public IActionResult Test1()
 		{
 			return Json(_productService.GetProducts());
 		}
+
+		[HttpGet("test2")]
+		public async Task<IActionResult> Test2()
+		{
+			return Json(await _productService.GetProductsAsync());
+		}
+
 	}
 }
