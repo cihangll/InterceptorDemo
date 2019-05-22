@@ -48,5 +48,25 @@ namespace InterceptorDemo.WebUI.Controllers
 		{
 			return Json(await _productService.ThrowErrorAsyncWithReturnType());
 		}
+
+		[HttpGet("test6")]
+		public IActionResult Test6()
+		{
+			_productService.NullCheck1(null);
+			return Json("");
+		}
+
+		[HttpGet("test7")]
+		public async Task<IActionResult> Test7()
+		{
+			await _productService.NullCheck2(null, null);
+			return Json("");
+		}
+
+		[HttpGet("test8")]
+		public async Task<IActionResult> Test8()
+		{
+			return Json(await _productService.NullCheck3("this will be run.", null));
+		}
 	}
 }
