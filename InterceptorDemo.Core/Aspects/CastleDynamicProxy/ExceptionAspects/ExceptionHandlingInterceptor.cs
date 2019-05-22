@@ -8,6 +8,8 @@ namespace InterceptorDemo.Core.Aspects.CastleDynamicProxy.ExceptionAspects
 	[Serializable]
 	public class ExceptionHandlingInterceptor : IInterceptor
 	{
+
+		private ExceptionAttribute attribute;
 		private readonly ILogger _logManager;
 
 		public ExceptionHandlingInterceptor(ILogger logManager)
@@ -18,7 +20,7 @@ namespace InterceptorDemo.Core.Aspects.CastleDynamicProxy.ExceptionAspects
 		public void Intercept(IInvocation invocation)
 		{
 
-			if (!InterceptorHelper.DecideToIntercept<ExceptionAttribute>(invocation))
+			if (!InterceptorHelper.DecideToIntercept(invocation, out attribute))
 			{
 				invocation.Proceed();
 				return;

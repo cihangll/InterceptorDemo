@@ -23,23 +23,24 @@ namespace InterceptorDemo.Core.Aspects.CastleDynamicProxy
 		}
 
 
-		public static bool DecideToIntercept<T>(IInvocation invocation) where T : BaseAttribute
+		public static bool DecideToIntercept<T>(IInvocation invocation, out T attribute) where T : BaseAttribute
 		{
 			var methodAttribute = AttributeHelper.GetMethodAttribute<T>(invocation);
 			if (methodAttribute != null && methodAttribute.IsActive)
 			{
+				attribute = methodAttribute;
 				return true;
 			}
 
 			var classAttribute = AttributeHelper.GetClassAttribute<T>(invocation);
 			if (classAttribute != null && classAttribute.IsActive)
 			{
+				attribute = classAttribute;
 				return true;
 			}
 
+			attribute = null;
 			return false;
 		}
-
-
 	}
 }

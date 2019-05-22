@@ -27,5 +27,6 @@ namespace InterceptorDemo.Core.Aspects.CastleDynamicProxy
 		{
 			return invocation.MethodInvocationTarget.IsDefined(typeof(T), false);
 		}
+
 	}
 }

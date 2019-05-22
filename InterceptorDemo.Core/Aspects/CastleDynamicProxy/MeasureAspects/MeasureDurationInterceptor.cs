@@ -12,6 +12,7 @@ namespace InterceptorDemo.Core.Aspects.CastleDynamicProxy.MeasureAspects
 	{
 		private static readonly MethodInfo handleAsyncMethodInfo = typeof(MeasureDurationInterceptor).GetMethod("InterceptAsynchronousWithResult", BindingFlags.Instance | BindingFlags.NonPublic);
 
+		private MeasureDurationAttribute attribute;
 		private readonly ILogger _logger;
 
 		public MeasureDurationInterceptor(ILogger logger)
@@ -21,8 +22,7 @@ namespace InterceptorDemo.Core.Aspects.CastleDynamicProxy.MeasureAspects
 
 		public void Intercept(IInvocation invocation)
 		{
-
-			if (!InterceptorHelper.DecideToIntercept<MeasureDurationAttribute>(invocation))
+			if (!InterceptorHelper.DecideToIntercept(invocation, out attribute))
 			{
 				invocation.Proceed();
 				return;
@@ -52,7 +52,7 @@ namespace InterceptorDemo.Core.Aspects.CastleDynamicProxy.MeasureAspects
 
 			stopwatch.Stop();
 
-			LogExecutionTime(invocation, stopwatch, 5);
+			LogExecutionTime(invocation, stopwatch, attribute.LogAfterSeconds);
 		}
 
 		private void InterceptAsynchronous(IInvocation invocation)
@@ -82,7 +82,7 @@ namespace InterceptorDemo.Core.Aspects.CastleDynamicProxy.MeasureAspects
 
 			stopwatch.Stop();
 
-			LogExecutionTime(invocation, stopwatch, 5);
+			LogExecutionTime(invocation, stopwatch, attribute.LogAfterSeconds);
 		}
 
 		private async Task<TResult> InternalInterceptAsynchronous<TResult>(IInvocation invocation)
@@ -95,7 +95,7 @@ namespace InterceptorDemo.Core.Aspects.CastleDynamicProxy.MeasureAspects
 
 			stopwatch.Stop();
 
-			LogExecutionTime(invocation, stopwatch, 5);
+			LogExecutionTime(invocation, stopwatch, attribute.LogAfterSeconds);
 
 			return result;
 		}

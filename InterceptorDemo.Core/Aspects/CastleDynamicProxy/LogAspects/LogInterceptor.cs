@@ -8,6 +8,8 @@ namespace InterceptorDemo.Core.Aspects.CastleDynamicProxy.LogAspects
 	[Serializable]
 	public class LogInterceptor : IInterceptor
 	{
+
+		private LogAttribute attribute;
 		private readonly ILogger _logManager;
 
 		public LogInterceptor(ILogger logManager)
@@ -17,7 +19,7 @@ namespace InterceptorDemo.Core.Aspects.CastleDynamicProxy.LogAspects
 
 		public void Intercept(IInvocation invocation)
 		{
-			if (!InterceptorHelper.DecideToIntercept<LogAttribute>(invocation))
+			if (!InterceptorHelper.DecideToIntercept(invocation, out attribute))
 			{
 				invocation.Proceed();
 				return;
