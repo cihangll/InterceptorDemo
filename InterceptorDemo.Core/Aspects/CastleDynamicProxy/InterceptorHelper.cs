@@ -4,12 +4,21 @@ namespace InterceptorDemo.Core.Aspects.CastleDynamicProxy
 {
 	public static class InterceptorHelper
 	{
-		public static bool DecideToRun<T>(IInvocation invocation) where T : BaseAttribute
+		public static bool DecideToIntercept<T>(IInvocation invocation) where T : BaseAttribute
 		{
-			//TODO: rewrite here.
-			var classAttribute = AttributeHelper.GetClassAttribute<T>(invocation);
 			var methodAttribute = AttributeHelper.GetMethodAttribute<T>(invocation);
-			return true;
+			if (methodAttribute != null && methodAttribute.IsActive)
+			{
+				return true;
+			}
+
+			var classAttribute = AttributeHelper.GetClassAttribute<T>(invocation);
+			if (classAttribute != null && classAttribute.IsActive)
+			{
+				return true;
+			}
+
+			return false;
 		}
 	}
 }

@@ -17,6 +17,13 @@ namespace InterceptorDemo.Core.Aspects.CastleDynamicProxy.ExceptionAspects
 
 		public void Intercept(IInvocation invocation)
 		{
+
+			if (!InterceptorHelper.DecideToIntercept<ExceptionAttribute>(invocation))
+			{
+				invocation.Proceed();
+				return;
+			}
+
 			try
 			{
 				invocation.Proceed();
