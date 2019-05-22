@@ -52,12 +52,12 @@ namespace InterceptorDemo.Core.Aspects.CastleDynamicProxy.ExceptionAspects
 			}
 			catch (ArgumentNullException e)
 			{
-				_logManager.Error($"Argument cannot be null.{Environment.NewLine}{LogHelper.CreateLogString(invocation)}", e);
+				LogErrorArgumentNull(invocation, e);
 				throw;
 			}
 			catch (Exception e)
 			{
-				_logManager.Error($"Error occured.{Environment.NewLine}{LogHelper.CreateLogString(invocation)}", e);
+				LogErrorException(invocation, e);
 				throw;
 			}
 		}
@@ -89,12 +89,12 @@ namespace InterceptorDemo.Core.Aspects.CastleDynamicProxy.ExceptionAspects
 			}
 			catch (ArgumentNullException e)
 			{
-				_logManager.Error($"Argument cannot be null.{Environment.NewLine}{LogHelper.CreateLogString(invocation)}", e);
+				LogErrorArgumentNull(invocation, e);
 				throw;
 			}
 			catch (Exception e)
 			{
-				_logManager.Error($"Error occured.{Environment.NewLine}{LogHelper.CreateLogString(invocation)}", e);
+				LogErrorException(invocation, e);
 				throw;
 			}
 		}
@@ -111,14 +111,29 @@ namespace InterceptorDemo.Core.Aspects.CastleDynamicProxy.ExceptionAspects
 			}
 			catch (ArgumentNullException e)
 			{
-				_logManager.Error($"Argument cannot be null.{Environment.NewLine}{LogHelper.CreateLogString(invocation)}", e);
+				LogErrorArgumentNull(invocation, e);
 				throw;
 			}
 			catch (Exception e)
 			{
-				_logManager.Error($"Error occured.{Environment.NewLine}{LogHelper.CreateLogString(invocation)}", e);
+				LogErrorException(invocation, e);
 				throw;
 			}
+		}
+
+		private void LogError(string message, Exception e)
+		{
+			_logManager.Error(message, e);
+		}
+
+		private void LogErrorArgumentNull(IInvocation invocation, Exception e)
+		{
+			LogError($"Argument cannot be null.{Environment.NewLine}{LogHelper.CreateLogString(invocation)}", e);
+		}
+
+		private void LogErrorException(IInvocation invocation, Exception e)
+		{
+			LogError($"Error occured.{Environment.NewLine}{LogHelper.CreateLogString(invocation)}", e);
 		}
 	}
 }
