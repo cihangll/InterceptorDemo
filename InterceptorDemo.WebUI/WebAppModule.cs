@@ -1,5 +1,4 @@
 ﻿using Autofac;
-using InterceptorDemo.Core.CrossCuttingConcerns.Logging.CastleCoreSerilog;
 using Microsoft.Extensions.Configuration;
 
 namespace InterceptorDemo.WebUI
@@ -11,9 +10,6 @@ namespace InterceptorDemo.WebUI
 		{
 			_configuration = configuration;
 		}
-		protected override void Load(ContainerBuilder builder)
-		{
-			builder.Register(x => SerilogInstance.CreateCastleCoreLogger(_configuration)).SingleInstance();
-		}
+		protected override void Load(ContainerBuilder builder) { }
 	}
 }
