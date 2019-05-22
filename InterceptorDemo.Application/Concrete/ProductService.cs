@@ -3,7 +3,6 @@ using InterceptorDemo.Core.Aspects.CastleDynamicProxy.ExceptionAspects;
 using InterceptorDemo.Core.Aspects.CastleDynamicProxy.MeasureAspects;
 using InterceptorDemo.Core.Models;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Threading.Tasks;
 
 namespace InterceptorDemo.Application.Concrete
@@ -36,14 +35,14 @@ namespace InterceptorDemo.Application.Concrete
 
 		public void ThrowError()
 		{
-			throw new System.Exception($"test exception from {MethodBase.GetCurrentMethod().Name}");
+			throw new System.Exception($"test exception from ThrowError");
 		}
 
 		[MeasureDuration(2)]
 		public async Task ThrowErrorAsync()
 		{
 			await Task.Delay(4000);
-			throw new System.Exception($"test exception from {MethodBase.GetCurrentMethod().Name}");
+			throw new System.Exception($"test exception from ThrowErrorAsync");
 		}
 
 		[MeasureDuration(3)]
@@ -51,7 +50,7 @@ namespace InterceptorDemo.Application.Concrete
 		{
 			await Task.Delay(4000).ContinueWith(x =>
 			{
-				throw new System.Exception($"test exception from {MethodBase.GetCurrentMethod().Name}");
+				throw new System.Exception($"test exception from ThrowErrorAsyncWithReturnType");
 
 			});
 			return "";
