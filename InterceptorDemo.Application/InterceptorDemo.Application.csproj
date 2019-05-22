@@ -4,4 +4,8 @@
     <TargetFramework>netcoreapp2.2</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\InterceptorDemo.Core\InterceptorDemo.Core.csproj" />
+  </ItemGroup>
+
 </Project>

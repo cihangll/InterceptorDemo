@@ -1,7 +1,32 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>netcoreapp2.2</TargetFramework>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Autofac" Version="4.9.2" />
+		<PackageReference Include="Autofac.Extensions.DependencyInjection" Version="4.4.0" />
+		<PackageReference Include="Autofac.Extras.DynamicProxy" Version="4.5.0" />
+		<PackageReference Include="Castle.Core" Version="4.4.0" />
+		<PackageReference Include="Castle.Core-Serilog" Version="4.4.0" />
+		<PackageReference Include="FluentValidation" Version="8.4.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Diagnostics" Version="2.2.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+		<PackageReference Include="Microsoft.Extensions.Caching.Redis" Version="2.2.0" />
+		<PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+	</ItemGroup>
+
+	<!-- For Serilog-->
+	<ItemGroup>
+		<PackageReference Include="Serilog.Extensions.Logging" Version="2.0.4" />
+		<PackageReference Include="Serilog.Settings.Configuration" Version="3.0.1" />
+		<PackageReference Include="Serilog.Sinks.File" Version="4.0.0" />
+		<PackageReference Include="Serilog.Sinks.MSSqlServer" Version="5.1.2" />
+		<PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
+		<PackageReference Include="Serilog.Sinks.Debug" Version="1.0.1" />
+		<!--<PackageReference Include="Serilog.Sinks.TextWriter" Version="2.1.0" />-->
+		<PackageReference Include="System.Management" Version="4.5.0" />
+	</ItemGroup>
 
 </Project>
