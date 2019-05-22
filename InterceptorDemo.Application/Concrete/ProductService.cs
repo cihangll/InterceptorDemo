@@ -1,7 +1,9 @@
 ﻿using InterceptorDemo.Application.Abstract;
+using InterceptorDemo.Application.ValidationRules.FluentValidation;
 using InterceptorDemo.Core.Aspects.CastleDynamicProxy.ExceptionAspects;
 using InterceptorDemo.Core.Aspects.CastleDynamicProxy.LogAspects;
 using InterceptorDemo.Core.Aspects.CastleDynamicProxy.MeasureAspects;
+using InterceptorDemo.Core.Aspects.CastleDynamicProxy.ValidationAspects;
 using InterceptorDemo.Core.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -55,6 +57,29 @@ namespace InterceptorDemo.Application.Concrete
 
 			});
 			return "";
+		}
+
+		public void NullCheck1([NotNull]List<Product> arg1)
+		{
+			//...
+		}
+
+		public async Task NullCheck2([NotNull]string arg1, [NotNull]Product arg2)
+		{
+			await Task.Delay(3000);
+		}
+
+		public async Task<string> NullCheck3([NotNull]string arg1, Product arg2)
+		{
+			await Task.Delay(3000);
+			return arg1;
+		}
+
+		[FluentValidation(typeof(ProductValidator))]
+		public async Task<string> SaveProduct([NotNull]Product product)
+		{
+			await Task.Delay(6000);
+			return "Product saved.";
 		}
 	}
 }

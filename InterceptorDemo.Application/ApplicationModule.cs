@@ -5,6 +5,7 @@ using InterceptorDemo.Application.Concrete;
 using InterceptorDemo.Core.Aspects.CastleDynamicProxy.ExceptionAspects;
 using InterceptorDemo.Core.Aspects.CastleDynamicProxy.LogAspects;
 using InterceptorDemo.Core.Aspects.CastleDynamicProxy.MeasureAspects;
+using InterceptorDemo.Core.Aspects.CastleDynamicProxy.ValidationAspects;
 using System;
 
 namespace InterceptorDemo.Application
@@ -34,6 +35,8 @@ namespace InterceptorDemo.Application
 		private Type[] RegisterAllInterceptors()
 		{
 			return new Type[]{
+				typeof(NullCheckValidationInterceptor),
+				typeof(FluentValidationInterceptor),
 				typeof(ExceptionHandlingInterceptor),
 				typeof(MeasureDurationInterceptor),
 				typeof(LogInterceptor)
