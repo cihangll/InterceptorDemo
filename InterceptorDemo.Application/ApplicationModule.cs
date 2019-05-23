@@ -2,6 +2,7 @@
 using Autofac.Extras.DynamicProxy;
 using InterceptorDemo.Application.Abstract;
 using InterceptorDemo.Application.Concrete;
+using InterceptorDemo.Core.Aspects.CastleDynamicProxy.CacheAspects;
 using InterceptorDemo.Core.Aspects.CastleDynamicProxy.ExceptionAspects;
 using InterceptorDemo.Core.Aspects.CastleDynamicProxy.LogAspects;
 using InterceptorDemo.Core.Aspects.CastleDynamicProxy.MeasureAspects;
@@ -39,7 +40,8 @@ namespace InterceptorDemo.Application
 				typeof(FluentValidationInterceptor),
 				typeof(ExceptionHandlingInterceptor),
 				typeof(MeasureDurationInterceptor),
-				typeof(LogInterceptor)
+				typeof(LogInterceptor),
+				typeof(CacheInterceptor)
 			};
 		}
 	}

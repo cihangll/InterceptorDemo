@@ -1,8 +1,10 @@
 ﻿using Autofac;
+using InterceptorDemo.Core.Aspects.CastleDynamicProxy.CacheAspects;
 using InterceptorDemo.Core.Aspects.CastleDynamicProxy.ExceptionAspects;
 using InterceptorDemo.Core.Aspects.CastleDynamicProxy.LogAspects;
 using InterceptorDemo.Core.Aspects.CastleDynamicProxy.MeasureAspects;
 using InterceptorDemo.Core.Aspects.CastleDynamicProxy.ValidationAspects;
+using InterceptorDemo.Core.CrossCuttingConcerns.Caching;
 using InterceptorDemo.Core.CrossCuttingConcerns.Logging.CastleCoreSerilog;
 using InterceptorDemo.Core.CrossCuttingConcerns.Logging.Config;
 
@@ -23,8 +25,11 @@ namespace InterceptorDemo.Core
 			builder.RegisterType<MeasureDurationInterceptor>();
 			builder.RegisterType<NullCheckValidationInterceptor>();
 			builder.RegisterType<FluentValidationInterceptor>();
+			builder.RegisterType<CacheInterceptor>();
 
 			builder.Register(x => SerilogInstance.CreateCastleCoreLogger(_config)).SingleInstance();
+
+			builder.RegisterType<InMemoryCache>().As<ICache>().SingleInstance();
 		}
 	}
 }
