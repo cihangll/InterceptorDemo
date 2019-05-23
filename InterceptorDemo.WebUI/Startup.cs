@@ -4,6 +4,7 @@ using InterceptorDemo.Application;
 using InterceptorDemo.Core;
 using InterceptorDemo.Core.CrossCuttingConcerns.Caching;
 using InterceptorDemo.Core.CrossCuttingConcerns.Logging.Config;
+using InterceptorDemo.Core.Mvc.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -58,8 +59,10 @@ namespace InterceptorDemo.WebUI
 			}
 			else
 			{
-				throw new NotSupportedException("This case cannot supported.");
+				app.UseAspNetCoreExceptionHandler();
 			}
+			//app.UseStatusCodePagesWithReExecute("/Errors/Status", "?statusCode={0}");
+
 
 			app.UseMvc();
 		}
