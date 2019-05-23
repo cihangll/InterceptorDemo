@@ -2,6 +2,7 @@
 using Autofac.Extensions.DependencyInjection;
 using InterceptorDemo.Application;
 using InterceptorDemo.Core;
+using InterceptorDemo.Core.CrossCuttingConcerns.Caching;
 using InterceptorDemo.Core.CrossCuttingConcerns.Logging.Config;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -26,13 +27,19 @@ namespace InterceptorDemo.WebUI
 		{
 			services.AddSingleton(Configuration);
 
-			var serilogConfig = new SerilogConfig();
-			Configuration.GetSection("Logging:SerilogConfig").Bind(serilogConfig);
-			services.AddSingleton(serilogConfig);
-
-			var castleCoreSerilogConfig = new CastleCoreSerilogConfig();
-			Configuration.GetSection("Logging:CastleCoreSerilogConfig").Bind(castleCoreSerilogConfig);
-			services.AddSingleton(castleCoreSerilogConfig);
+			if (Configuration.GetValue<bool>("RedisSettings:UseRedisCache"))
+			{
+				services.AddDistributedRedisCache(options =>
+				{
+					options.Configuration = Configuration.GetValue<string>("RedisSettings:Connection");
+				});
+			}
+			else
+			{
+				//We dont need to register these. Mcv application will automatically register.
+				//services.AddMemoryCache();
+				//services.AddDistributedMemoryCache();
+			}
 
 			services.AddLogging(loggingBuilder => loggingBuilder.AddSerilog(dispose: true));
 
@@ -65,6 +72,18 @@ namespace InterceptorDemo.WebUI
 			builder.RegisterModule(new CoreModule(config));
 			builder.RegisterModule(new ApplicationModule());
 			builder.RegisterModule(new WebAppModule(configuration));
+
+			if (Configuration.GetValue<bool>("RedisSettings:UseRedisCache"))
+			{
+				builder.RegisterType<DistributedCache>().As<ICache>().SingleInstance();
+			}
+			else
+			{
+				// Decide to register type here.
+
+				builder.RegisterType<DistributedCache>().As<ICache>().SingleInstance();
+				//builder.RegisterType<InMemoryCache>().As<ICache>().SingleInstance();
+			}
 
 			builder.Populate(services);
 

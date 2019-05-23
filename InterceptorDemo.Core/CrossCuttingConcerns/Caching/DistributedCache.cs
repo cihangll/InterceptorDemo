@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
 using System;
 using System.IO;
+using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,16 +10,16 @@ namespace InterceptorDemo.Core.CrossCuttingConcerns.Caching
 {
 	public class DistributedCache : ICache
 	{
-		private readonly IDistributedCache _cache;
+		private readonly IDistributedCache _distributedCache;
 		public DistributedCache(IDistributedCache cache)
 		{
-			_cache = cache;
+			_distributedCache = cache;
 		}
 
 		public void AddCache(string key, object data, int seconds = 300)
 		{
 			var byteValue = Encoding.UTF8.GetBytes(data.Serialize());
-			_cache.Set(key, byteValue, new DistributedCacheEntryOptions()
+			_distributedCache.Set(key, byteValue, new DistributedCacheEntryOptions()
 			{
 				AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(seconds)
 			});
@@ -26,23 +27,25 @@ namespace InterceptorDemo.Core.CrossCuttingConcerns.Caching
 
 		public T GetCache<T>(string key)
 		{
-			var value = _cache.Get(key);
+			var value = _distributedCache.Get(key);
 			if (value != null)
 				return Encoding.UTF8.GetString(value).Deserialize<T>();
 			return default;
 		}
 
-		public object GetCache(string key)
+		public object GetCache(string key, Type resultType)
 		{
-			var value = _cache.Get(key);
+			var methodInfo = GetType().GetMethod("GetCache", BindingFlags.Public | BindingFlags.Instance, null, new Type[] { typeof(string) }, null);
+			var genericMethodInfo = methodInfo.MakeGenericMethod(resultType);
+			object value = genericMethodInfo.Invoke(this, new[] { key });
 			if (value != null)
-				return Encoding.UTF8.GetString(value).Deserialize();
+				return value;
 			return default;
 		}
 
 		public T GetCache<T>(string key, Func<T> getData, int seconds = 300)
 		{
-			var value = _cache.Get(key);
+			var value = _distributedCache.Get(key);
 			if (value != null)
 				return Encoding.UTF8.GetString(value).Deserialize<T>();
 			AddCache(key, getData.Invoke(), seconds);
@@ -51,14 +54,14 @@ namespace InterceptorDemo.Core.CrossCuttingConcerns.Caching
 
 		public void RemoveCache(string key)
 		{
-			_cache.Remove(key);
+			_distributedCache.Remove(key);
 		}
 
 		public async void AddCacheAsync(string key, object data, int seconds = 300)
 		{
 			var byteValue = Encoding.UTF8.GetBytes(data.Serialize());
 
-			await _cache.SetAsync(key, byteValue, new DistributedCacheEntryOptions()
+			await _distributedCache.SetAsync(key, byteValue, new DistributedCacheEntryOptions()
 			{
 				AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(seconds)
 			});
@@ -66,7 +69,7 @@ namespace InterceptorDemo.Core.CrossCuttingConcerns.Caching
 
 		public async Task<T> GetCacheAsync<T>(string key)
 		{
-			var value = await _cache.GetAsync(key);
+			var value = await _distributedCache.GetAsync(key);
 			if (value != null)
 				return Encoding.UTF8.GetString(value).Deserialize<T>();
 			return default;
@@ -74,7 +77,7 @@ namespace InterceptorDemo.Core.CrossCuttingConcerns.Caching
 
 		public async Task<T> GetCacheAsync<T>(string key, Func<Task<T>> getData, int seconds = 300)
 		{
-			var value = await _cache.GetAsync(key);
+			var value = await _distributedCache.GetAsync(key);
 			if (value != null)
 				return Encoding.UTF8.GetString(value).Deserialize<T>();
 
@@ -84,7 +87,7 @@ namespace InterceptorDemo.Core.CrossCuttingConcerns.Caching
 
 		public void RemoveCacheAsync(string key)
 		{
-			_cache.RemoveAsync(key);
+			_distributedCache.RemoveAsync(key);
 		}
 
 		public async Task AddObjectAsync(string key, object obj, int seconds = 300)
@@ -95,12 +98,12 @@ namespace InterceptorDemo.Core.CrossCuttingConcerns.Caching
 			};
 
 			var byteArray = ToByteArray(obj);
-			await _cache.SetAsync(key, byteArray, entryOptions);
+			await _distributedCache.SetAsync(key, byteArray, entryOptions);
 		}
 
 		public async Task<object> GetObjectAsync(string key)
 		{
-			var byteArray = await _cache.GetAsync(key);
+			var byteArray = await _distributedCache.GetAsync(key);
 			return FromByteArray(byteArray);
 		}
 
@@ -133,7 +136,7 @@ namespace InterceptorDemo.Core.CrossCuttingConcerns.Caching
 
 		public bool IsExist(string key)
 		{
-			return string.IsNullOrEmpty(_cache.GetString(key)) ? false : true;
+			return string.IsNullOrEmpty(_distributedCache.GetString(key)) ? false : true;
 		}
 	}
 }
