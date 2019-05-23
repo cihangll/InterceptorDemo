@@ -26,9 +26,11 @@ namespace InterceptorDemo.Application.Concrete
 		};
 
 		[Cache(300)]
+		[MeasureDuration(3)]
 		public List<Product> GetProducts()
 		{
-			Task.Delay(4000).Wait();
+			//For test
+			Task.Delay(3000).Wait();
 			return _products;
 		}
 
@@ -36,53 +38,15 @@ namespace InterceptorDemo.Application.Concrete
 		[MeasureDuration(3)]
 		public async Task<List<Product>> GetProductsAsync()
 		{
-			await Task.Delay(4000);
+			//For test
+			await Task.Delay(3000);
 			return _products;
-		}
-
-		public void ThrowError()
-		{
-			throw new System.Exception($"test exception from ThrowError");
-		}
-
-		[MeasureDuration(2)]
-		public async Task ThrowErrorAsync()
-		{
-			await Task.Delay(4000);
-			throw new System.Exception($"test exception from ThrowErrorAsync");
-		}
-
-		[MeasureDuration(3)]
-		public async Task<string> ThrowErrorAsyncWithReturnType()
-		{
-			await Task.Delay(4000).ContinueWith(x =>
-			{
-				throw new System.Exception($"test exception from ThrowErrorAsyncWithReturnType");
-
-			});
-			return "";
-		}
-
-		public void NullCheck1([NotNull]List<Product> arg1)
-		{
-			//...
-		}
-
-		public async Task NullCheck2([NotNull]string arg1, [NotNull]Product arg2)
-		{
-			await Task.Delay(3000);
-		}
-
-		public async Task<string> NullCheck3([NotNull]string arg1, Product arg2)
-		{
-			await Task.Delay(3000);
-			return arg1;
 		}
 
 		[FluentValidation(typeof(ProductValidator))]
 		public async Task<string> SaveProduct([NotNull]Product product)
 		{
-			await Task.Delay(6000);
+			await Task.Delay(3000);
 			return "Product saved.";
 		}
 	}

@@ -18,67 +18,28 @@ namespace InterceptorDemo.WebUI.Controllers
 			_logger = logger;
 		}
 
-		[HttpGet("test1")]
-		public IActionResult Test1()
+		[HttpGet("products")]
+		public IActionResult GetProducts()
 		{
 			return Json(_productService.GetProducts());
 		}
 
-		[HttpGet("test2")]
-		public async Task<IActionResult> Test2()
+		[HttpGet("productsAsync")]
+		public async Task<IActionResult> GetProductsAsync()
 		{
 			return Json(await _productService.GetProductsAsync());
 		}
 
-		[HttpGet("test3")]
-		public IActionResult Test3()
+		[HttpGet("saveProduct")]
+		public async Task<IActionResult> PostProduct()
 		{
-			_productService.ThrowError();
-			return Json("");
-		}
-
-		[HttpGet("test4")]
-		public async Task<IActionResult> Test4()
-		{
-			await _productService.ThrowErrorAsync();
-			return Json("");
-		}
-
-		[HttpGet("test5")]
-		public async Task<IActionResult> Test5()
-		{
-			return Json(await _productService.ThrowErrorAsyncWithReturnType());
-		}
-
-		[HttpGet("test6")]
-		public IActionResult Test6()
-		{
-			_productService.NullCheck1(null);
-			return Json("");
-		}
-
-		[HttpGet("test7")]
-		public async Task<IActionResult> Test7()
-		{
-			await _productService.NullCheck2(null, null);
-			return Json("");
-		}
-
-		[HttpGet("test8")]
-		public async Task<IActionResult> Test8()
-		{
-			return Json(await _productService.NullCheck3("this will be run.", null));
-		}
-
-		[HttpGet("test9")]
-		public async Task<IActionResult> Test9()
-		{
+			//For test.
 			return Json(await _productService.SaveProduct(new Product()
 			{
-				CategoryId = 5,
+				//CategoryId = 5,
 				ProductId = 2,
 				ProductName = "test",
-				QuantityPerUnit = "4",
+				//QuantityPerUnit = "4",
 				UnitPrice = 400
 			}));
 		}
