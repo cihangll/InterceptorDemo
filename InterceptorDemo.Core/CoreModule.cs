@@ -21,7 +21,7 @@ namespace InterceptorDemo.Core
 		protected override void Load(ContainerBuilder builder)
 		{
 			builder.Register(x => SerilogInstance.CreateCastleCoreLogger(_config)).SingleInstance();
-			builder.RegisterType<InMemoryCache>().As<ICache>().SingleInstance();
+			builder.RegisterType<DistributedCache>().As<ICache>().SingleInstance();
 
 			#region Interceptors
 

@@ -12,13 +12,6 @@ using System;
 
 namespace InterceptorDemo.WebUI
 {
-
-	public class EmailSettings
-	{
-		public string EmailTemplatesPath { get; set; }
-		public string Email { get; set; }
-	}
-
 	public class Startup
 	{
 		public IConfiguration Configuration { get; }
