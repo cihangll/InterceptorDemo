@@ -1,5 +1,6 @@
-﻿using Castle.Core.Logging;
-using Castle.DynamicProxy;
+﻿using Castle.DynamicProxy;
+using InterceptorDemo.Core.CrossCuttingConcerns.Caching;
+using Newtonsoft.Json;
 using System;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -11,23 +12,26 @@ namespace InterceptorDemo.Core.Aspects.CastleDynamicProxy.CacheAspects
 	{
 		private static readonly MethodInfo handleAsyncMethodInfo = typeof(CacheInterceptor).GetMethod("InterceptAsynchronousWithResult", BindingFlags.Instance | BindingFlags.NonPublic);
 		private CacheAttribute attribute;
+		private string cacheKey;
 
-		private readonly ILogger _logger;
-		private readonly object _lockObject = new object();
+		private readonly ICache _cache;
 
-		public CacheInterceptor(ILogger logger)
+		public CacheInterceptor(ICache cache)
 		{
-			_logger = logger;
+			_cache = cache;
 		}
 
 		public void Intercept(IInvocation invocation)
 		{
-
-			if (!InterceptorHelper.DecideToIntercept(invocation, out attribute))
+			if (!InterceptorHelper.DecideToIntercept(invocation, out attribute)
+				|| invocation.Method.ReturnType == typeof(void)
+				|| invocation.Method.ReturnType == typeof(Task))
 			{
 				invocation.Proceed();
 				return;
 			}
+
+			cacheKey = string.Concat(invocation.TargetType.FullName, ".", invocation.Method.Name, "(", JsonConvert.SerializeObject(invocation.Arguments), ")");
 
 			var delegateType = InterceptorHelper.GetDelegateType(invocation);
 			if (delegateType == MethodType.Synchronous)
@@ -36,7 +40,7 @@ namespace InterceptorDemo.Core.Aspects.CastleDynamicProxy.CacheAspects
 			}
 			if (delegateType == MethodType.AsyncAction)
 			{
-				InterceptAsynchronous(invocation);
+				throw new NotSupportedException($"A method with a return type Task cannot be cached.");
 			}
 			if (delegateType == MethodType.AsyncFunction)
 			{
@@ -46,12 +50,28 @@ namespace InterceptorDemo.Core.Aspects.CastleDynamicProxy.CacheAspects
 
 		private void InterceptSynchronous(IInvocation invocation)
 		{
-			invocation.Proceed();
-		}
+			if (_cache.IsExist(cacheKey))
+			{
+				var cacheResult = _cache.GetCache(cacheKey);
+				if (cacheResult.GetType() == invocation.Method.ReturnType)
+				{
+					invocation.ReturnValue = cacheResult;
+				}
+				else
+				{
+					SaveCache();
+				}
+			}
+			else
+			{
+				SaveCache();
+			}
 
-		private void InterceptAsynchronous(IInvocation invocation)
-		{
-			invocation.ReturnValue = InternalInterceptAsynchronous(invocation);
+			void SaveCache()
+			{
+				invocation.Proceed();
+				AddCache(invocation.ReturnValue);
+			}
 		}
 
 		private void InterceptAsynchronousWithResult<TResult>(IInvocation invocation)
@@ -66,20 +86,40 @@ namespace InterceptorDemo.Core.Aspects.CastleDynamicProxy.CacheAspects
 			methodInfo.Invoke(this, new[] { invocation });
 		}
 
-		private async Task InternalInterceptAsynchronous(IInvocation invocation)
-		{
-			invocation.Proceed();
-			var task = (Task)invocation.ReturnValue;
-			await task;
-		}
-
 		private async Task<TResult> InternalInterceptAsynchronous<TResult>(IInvocation invocation)
 		{
-			invocation.Proceed();
-			var task = (Task<TResult>)invocation.ReturnValue;
-			TResult result = await task;
+			if (_cache.IsExist(cacheKey))
+			{
+				var cacheResult = _cache.GetCache(cacheKey);
+				if (cacheResult.GetType() == typeof(TResult))
+				{
+					return (TResult)cacheResult;
+				}
+				else
+				{
+					return await SaveCache();
+				}
+			}
+			else
+			{
+				return await SaveCache();
+			}
 
-			return result;
+			async Task<TResult> SaveCache()
+			{
+				invocation.Proceed();
+				var task = (Task<TResult>)invocation.ReturnValue;
+				TResult result = await task;
+
+				AddCache(result);
+				return result;
+			}
+		}
+
+		private void AddCache(object data)
+		{
+			_cache.RemoveCache(cacheKey);
+			_cache.AddCache(cacheKey, data, attribute.CacheDurationInSecond);
 		}
 	}
 }

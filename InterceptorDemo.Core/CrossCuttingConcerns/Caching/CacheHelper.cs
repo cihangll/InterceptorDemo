@@ -107,6 +107,12 @@ namespace InterceptorDemo.Core.CrossCuttingConcerns.Caching
 		{
 			return JsonConvert.DeserializeObject<T>(obj);
 		}
+
+		public static object Deserialize(this string obj)
+		{
+			return JsonConvert.DeserializeObject(obj);
+		}
+
 		public static string Serialize(this object obj)
 		{
 			return JsonConvert.SerializeObject(obj, Formatting.Indented, new JsonSerializerSettings

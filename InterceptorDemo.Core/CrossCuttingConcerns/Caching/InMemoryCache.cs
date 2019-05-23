@@ -22,6 +22,14 @@ namespace InterceptorDemo.Core.CrossCuttingConcerns.Caching
 				return result;
 			return result;
 		}
+
+		public object GetCache(string key)
+		{
+			if (Cache.TryGetValue(key, out object result))
+				return result;
+			return result;
+		}
+
 		public T GetCache<T>(string key, Func<T> getData, int seconds = 300)
 		{
 			if (!Cache.TryGetValue(key, out T _))
@@ -40,6 +48,11 @@ namespace InterceptorDemo.Core.CrossCuttingConcerns.Caching
 		public void AddOrUpdateCache(string key, object data, int seconds = 300)
 		{
 			Cache.Set(key, data, new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromSeconds(seconds)));
+		}
+
+		public bool IsExist(string key)
+		{
+			return Cache.Get(key) == null ? false : true;
 		}
 
 

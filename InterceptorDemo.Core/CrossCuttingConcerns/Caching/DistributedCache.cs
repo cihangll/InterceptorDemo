@@ -26,11 +26,18 @@ namespace InterceptorDemo.Core.CrossCuttingConcerns.Caching
 
 		public T GetCache<T>(string key)
 		{
-			var result = default(T);
 			var value = _cache.Get(key);
 			if (value != null)
 				return Encoding.UTF8.GetString(value).Deserialize<T>();
-			return result;
+			return default;
+		}
+
+		public object GetCache(string key)
+		{
+			var value = _cache.Get(key);
+			if (value != null)
+				return Encoding.UTF8.GetString(value).Deserialize();
+			return default;
 		}
 
 		public T GetCache<T>(string key, Func<T> getData, int seconds = 300)
@@ -59,11 +66,10 @@ namespace InterceptorDemo.Core.CrossCuttingConcerns.Caching
 
 		public async Task<T> GetCacheAsync<T>(string key)
 		{
-			var result = default(T);
 			var value = await _cache.GetAsync(key);
 			if (value != null)
 				return Encoding.UTF8.GetString(value).Deserialize<T>();
-			return result;
+			return default;
 		}
 
 		public async Task<T> GetCacheAsync<T>(string key, Func<Task<T>> getData, int seconds = 300)
@@ -111,7 +117,6 @@ namespace InterceptorDemo.Core.CrossCuttingConcerns.Caching
 			}
 		}
 
-
 		private object FromByteArray(byte[] byteArray)
 		{
 			if (byteArray == null || byteArray.Length == 0)
@@ -124,6 +129,11 @@ namespace InterceptorDemo.Core.CrossCuttingConcerns.Caching
 				memoryStream.Seek(0, SeekOrigin.Begin);
 				return formatter.Deserialize(memoryStream);
 			}
+		}
+
+		public bool IsExist(string key)
+		{
+			return string.IsNullOrEmpty(_cache.GetString(key)) ? false : true;
 		}
 	}
 }

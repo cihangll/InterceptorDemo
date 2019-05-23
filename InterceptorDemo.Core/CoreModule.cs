@@ -20,6 +20,11 @@ namespace InterceptorDemo.Core
 
 		protected override void Load(ContainerBuilder builder)
 		{
+			builder.Register(x => SerilogInstance.CreateCastleCoreLogger(_config)).SingleInstance();
+			builder.RegisterType<InMemoryCache>().As<ICache>().SingleInstance();
+
+			#region Interceptors
+
 			builder.RegisterType<ExceptionHandlingInterceptor>();
 			builder.RegisterType<LogInterceptor>();
 			builder.RegisterType<MeasureDurationInterceptor>();
@@ -27,9 +32,7 @@ namespace InterceptorDemo.Core
 			builder.RegisterType<FluentValidationInterceptor>();
 			builder.RegisterType<CacheInterceptor>();
 
-			builder.Register(x => SerilogInstance.CreateCastleCoreLogger(_config)).SingleInstance();
-
-			builder.RegisterType<InMemoryCache>().As<ICache>().SingleInstance();
+			#endregion
 		}
 	}
 }

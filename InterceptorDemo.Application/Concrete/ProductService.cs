@@ -1,5 +1,6 @@
 ﻿using InterceptorDemo.Application.Abstract;
 using InterceptorDemo.Application.ValidationRules.FluentValidation;
+using InterceptorDemo.Core.Aspects.CastleDynamicProxy.CacheAspects;
 using InterceptorDemo.Core.Aspects.CastleDynamicProxy.ExceptionAspects;
 using InterceptorDemo.Core.Aspects.CastleDynamicProxy.LogAspects;
 using InterceptorDemo.Core.Aspects.CastleDynamicProxy.MeasureAspects;
@@ -24,11 +25,13 @@ namespace InterceptorDemo.Application.Concrete
 			new Product() { CategoryId = 1, ProductId = 5,ProductName = "product 5", QuantityPerUnit = "5", UnitPrice = 5000}
 		};
 
+		[Cache(300)]
 		public List<Product> GetProducts()
 		{
 			return _products;
 		}
 
+		[Cache(300)]
 		[MeasureDuration(3)]
 		public async Task<List<Product>> GetProductsAsync()
 		{
