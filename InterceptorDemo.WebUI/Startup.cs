@@ -5,9 +5,12 @@ using InterceptorDemo.Core;
 using InterceptorDemo.Core.CrossCuttingConcerns.Caching;
 using InterceptorDemo.Core.CrossCuttingConcerns.Logging.Config;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 using Serilog;
 using System;
 
@@ -58,7 +61,15 @@ namespace InterceptorDemo.WebUI
 			}
 			else
 			{
-				throw new NotSupportedException("This case cannot supported.");
+				app.UseExceptionHandler(a => a.Run(async context =>
+				{
+					var exceptionHandlerPathFeature = context.Features.Get<IExceptionHandlerPathFeature>();
+					var exception = exceptionHandlerPathFeature.Error;
+
+					var result = JsonConvert.SerializeObject(new { error = exception.Message });
+					context.Response.ContentType = "application/json";
+					await context.Response.WriteAsync(result);
+				}));
 			}
 
 			app.UseMvc();
