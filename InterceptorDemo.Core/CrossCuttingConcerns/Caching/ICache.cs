@@ -7,7 +7,7 @@ namespace InterceptorDemo.Core.CrossCuttingConcerns.Caching
 	{
 		void AddCache(string key, object data, int seconds = 300);
 		T GetCache<T>(string key);
-		object GetCache(string key);
+		object GetCache(string key, Type resultType);
 		T GetCache<T>(string key, Func<T> getData, int seconds = 300);
 		void RemoveCache(string key);
 		void RemoveCacheAsync(string key);

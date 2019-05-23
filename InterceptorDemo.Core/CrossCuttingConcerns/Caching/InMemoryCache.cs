@@ -1,38 +1,43 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using System;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace InterceptorDemo.Core.CrossCuttingConcerns.Caching
 {
 	public class InMemoryCache : ICache
 	{
-		private static readonly MemoryCache Cache;
-		static InMemoryCache()
+		private readonly IMemoryCache _memoryCache;
+
+		public InMemoryCache(IMemoryCache cache)
 		{
-			Cache = new MemoryCache(new MemoryCacheOptions() { });
+			_memoryCache = cache;
 		}
 
 		public void AddCache(string key, object data, int seconds = 300)
 		{
-			Cache.Set(key, data, new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromSeconds(seconds)));
+			_memoryCache.Set(key, data, new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromSeconds(seconds)));
 		}
 		public T GetCache<T>(string key)
 		{
-			if (Cache.TryGetValue(key, out T result))
+			if (_memoryCache.TryGetValue(key, out T result))
 				return result;
 			return result;
 		}
 
-		public object GetCache(string key)
+		public object GetCache(string key, Type resultType)
 		{
-			if (Cache.TryGetValue(key, out object result))
-				return result;
-			return result;
+			var methodInfo = GetType().GetMethod("GetCache", BindingFlags.Public | BindingFlags.Instance, null, new Type[] { typeof(string) }, null);
+			var genericMethodInfo = methodInfo.MakeGenericMethod(resultType);
+			object value = genericMethodInfo.Invoke(this, new[] { key });
+			if (value != null)
+				return value;
+			return default;
 		}
 
 		public T GetCache<T>(string key, Func<T> getData, int seconds = 300)
 		{
-			if (!Cache.TryGetValue(key, out T _))
+			if (!_memoryCache.TryGetValue(key, out T _))
 			{
 				AddCache(key, getData.Invoke(), seconds);
 			}
@@ -42,17 +47,17 @@ namespace InterceptorDemo.Core.CrossCuttingConcerns.Caching
 
 		public void RemoveCache(string key)
 		{
-			if (Cache.TryGetValue(key, out _))
-				Cache.Remove(key);
+			if (_memoryCache.TryGetValue(key, out _))
+				_memoryCache.Remove(key);
 		}
 		public void AddOrUpdateCache(string key, object data, int seconds = 300)
 		{
-			Cache.Set(key, data, new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromSeconds(seconds)));
+			_memoryCache.Set(key, data, new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromSeconds(seconds)));
 		}
 
 		public bool IsExist(string key)
 		{
-			return Cache.Get(key) == null ? false : true;
+			return _memoryCache.Get(key) == null ? false : true;
 		}
 
 
@@ -60,7 +65,7 @@ namespace InterceptorDemo.Core.CrossCuttingConcerns.Caching
 
 		public void AddCacheAsync(string key, object data, int seconds = 300)
 		{
-			Cache.Set(key, data,
+			_memoryCache.Set(key, data,
 				new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromSeconds(seconds)));
 		}
 		public async Task<T> GetCacheAsync<T>(string key)
@@ -68,14 +73,14 @@ namespace InterceptorDemo.Core.CrossCuttingConcerns.Caching
 			return await Task.Run(() =>
 			{
 				var data = default(T);
-				if (Cache.TryGetValue(key, out data))
+				if (_memoryCache.TryGetValue(key, out data))
 					return data;
 				return default(T);
 			});
 		}
 		public async Task<T> GetCacheAsync<T>(string key, Func<Task<T>> getData, int seconds = 300)
 		{
-			if (!Cache.TryGetValue(key, out T _))
+			if (!_memoryCache.TryGetValue(key, out T _))
 			{
 				AddCacheAsync(key, getData.Invoke().Result, seconds);
 			}
@@ -85,14 +90,14 @@ namespace InterceptorDemo.Core.CrossCuttingConcerns.Caching
 
 		public async void RemoveCacheAsync(string key)
 		{
-			await Task.Run(() => Cache.Remove(key));
+			await Task.Run(() => _memoryCache.Remove(key));
 		}
 
 		public async Task AddObjectAsync(string key, object obj, int seconds = 300)
 		{
 			await Task.Run(() =>
 			{
-				Cache.Set(key, obj,
+				_memoryCache.Set(key, obj,
 					new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromSeconds(seconds)));
 			});
 		}
@@ -101,7 +106,7 @@ namespace InterceptorDemo.Core.CrossCuttingConcerns.Caching
 		{
 			return await Task.Run(() =>
 			{
-				if (Cache.TryGetValue(key, out object data))
+				if (_memoryCache.TryGetValue(key, out object data))
 					return data;
 				return data;
 			});

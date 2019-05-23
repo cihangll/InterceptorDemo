@@ -28,6 +28,7 @@ namespace InterceptorDemo.Application.Concrete
 		[Cache(300)]
 		public List<Product> GetProducts()
 		{
+			Task.Delay(4000).Wait();
 			return _products;
 		}
 

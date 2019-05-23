@@ -4,7 +4,6 @@ using InterceptorDemo.Core.Aspects.CastleDynamicProxy.ExceptionAspects;
 using InterceptorDemo.Core.Aspects.CastleDynamicProxy.LogAspects;
 using InterceptorDemo.Core.Aspects.CastleDynamicProxy.MeasureAspects;
 using InterceptorDemo.Core.Aspects.CastleDynamicProxy.ValidationAspects;
-using InterceptorDemo.Core.CrossCuttingConcerns.Caching;
 using InterceptorDemo.Core.CrossCuttingConcerns.Logging.CastleCoreSerilog;
 using InterceptorDemo.Core.CrossCuttingConcerns.Logging.Config;
 
@@ -21,7 +20,6 @@ namespace InterceptorDemo.Core
 		protected override void Load(ContainerBuilder builder)
 		{
 			builder.Register(x => SerilogInstance.CreateCastleCoreLogger(_config)).SingleInstance();
-			builder.RegisterType<DistributedCache>().As<ICache>().SingleInstance();
 
 			#region Interceptors
 

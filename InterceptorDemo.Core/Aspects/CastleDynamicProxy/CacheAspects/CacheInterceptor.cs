@@ -52,8 +52,8 @@ namespace InterceptorDemo.Core.Aspects.CastleDynamicProxy.CacheAspects
 		{
 			if (_cache.IsExist(cacheKey))
 			{
-				var cacheResult = _cache.GetCache(cacheKey);
-				if (cacheResult.GetType() == invocation.Method.ReturnType)
+				var cacheResult = GetCache(invocation.Method.ReturnType);
+				if (cacheResult != null && cacheResult.GetType() == invocation.Method.ReturnType)
 				{
 					invocation.ReturnValue = cacheResult;
 				}
@@ -90,8 +90,8 @@ namespace InterceptorDemo.Core.Aspects.CastleDynamicProxy.CacheAspects
 		{
 			if (_cache.IsExist(cacheKey))
 			{
-				var cacheResult = _cache.GetCache(cacheKey);
-				if (cacheResult.GetType() == typeof(TResult))
+				var cacheResult = GetCache(invocation.Method.ReturnType.GetGenericArguments()[0]);
+				if (cacheResult != null && cacheResult.GetType() == typeof(TResult))
 				{
 					return (TResult)cacheResult;
 				}
@@ -120,6 +120,11 @@ namespace InterceptorDemo.Core.Aspects.CastleDynamicProxy.CacheAspects
 		{
 			_cache.RemoveCache(cacheKey);
 			_cache.AddCache(cacheKey, data, attribute.CacheDurationInSecond);
+		}
+
+		private object GetCache(Type type)
+		{
+			return _cache.GetCache(cacheKey, type);
 		}
 	}
 }
