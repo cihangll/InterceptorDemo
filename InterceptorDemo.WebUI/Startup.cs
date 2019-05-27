@@ -23,7 +23,7 @@ namespace InterceptorDemo.WebUI
 		public Startup(IConfiguration configuration)
 		{
 			Configuration = configuration;
-			Log.Logger = CreateSerilogLogger(configuration);
+			Log.Logger = CreateSerilogLogger();
 		}
 
 		public IServiceProvider ConfigureServices(IServiceCollection services)
@@ -48,7 +48,7 @@ namespace InterceptorDemo.WebUI
 
 			services.AddMvc();
 
-			var container = CreateContainer(services, Configuration);
+			var container = CreateContainer(services);
 			return new AutofacServiceProvider(container);
 		}
 
@@ -75,14 +75,14 @@ namespace InterceptorDemo.WebUI
 			app.UseMvc();
 		}
 
-		internal IContainer CreateContainer(IServiceCollection services, IConfiguration configuration)
+		internal IContainer CreateContainer(IServiceCollection services)
 		{
-			var config = configuration.GetSection("Logging:CastleCoreSerilogConfig").Get<CastleCoreSerilogConfig>();
+			var config = Configuration.GetSection("Logging:CastleCoreSerilogConfig").Get<CastleCoreSerilogConfig>();
 
 			var builder = new ContainerBuilder();
 			builder.RegisterModule(new CoreModule(config));
 			builder.RegisterModule(new ApplicationModule());
-			builder.RegisterModule(new WebAppModule(configuration));
+			builder.RegisterModule(new WebAppModule(Configuration));
 
 			if (Configuration.GetValue<bool>("RedisSettings:UseRedisCache"))
 			{
@@ -101,9 +101,9 @@ namespace InterceptorDemo.WebUI
 			return builder.Build();
 		}
 
-		internal static Serilog.ILogger CreateSerilogLogger(IConfiguration configuration)
+		internal static Serilog.ILogger CreateSerilogLogger()
 		{
-			var config = configuration.GetSection("Logging:SerilogConfig").Get<SerilogConfig>();
+			var config = Configuration.GetSection("Logging:SerilogConfig").Get<SerilogConfig>();
 
 			var loggerConfig = new LoggerConfiguration();
 			if (config.MSSqlServer != null && !string.IsNullOrEmpty(config.MSSqlServer.ConnectionString))
