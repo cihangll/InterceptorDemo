@@ -54,7 +54,10 @@ namespace InterceptorDemo.Core.CrossCuttingConcerns.Caching
 
 		public void RemoveCache(string key)
 		{
-			_distributedCache.Remove(key);
+			if (IsExist(key))
+			{
+				_distributedCache.Remove(key);
+			}
 		}
 
 		public async void AddCacheAsync(string key, object data, int seconds = 300)
