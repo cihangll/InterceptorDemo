@@ -118,6 +118,10 @@ namespace InterceptorDemo.Core.Aspects.CastleDynamicProxy.CacheAspects
 
 		private void AddCache(object data)
 		{
+			if (data == null)
+			{
+				return;
+			}
 			_cache.RemoveCache(cacheKey);
 			_cache.AddCache(cacheKey, data, attribute.CacheDurationInSecond);
 		}
